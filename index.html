@@ -82,9 +82,9 @@
     <div id="mainPanel" style="display:none;">
       <div class="section-title">Tambah UID Baru</div>
       <input type="text" id="uid" placeholder="UID (ex: VX-XXXX-CUTE)">
-      <input type="text" id="password">
+      <input type="text" id="password" placeholder="Password">
       <input type="date" id="expired">
-      <input type="text" id="script">
+      <input type="text" id="script" placeholder="Script Raw URL">
       <select id="banned">
         <option value="false">Aktif</option>
         <option value="true">Banned</option>
@@ -92,12 +92,12 @@
       <button onclick="saveUser()">💾 Simpan UID</button>
 
       <div class="section-title">Edit UID</div>
-      <input type="text" id="editUid">
+      <input type="text" id="editUid" placeholder="Masukkan UID untuk Edit">
       <button onclick="loadUser()">🔍 Cari UID</button>
       <div id="editForm" style="display:none;">
-        <input type="text" id="editPassword">
+        <input type="text" id="editPassword" placeholder="Password Baru">
         <input type="date" id="editExpired">
-        <input type="text" id="editScript">
+        <input type="text" id="editScript" placeholder="Script Raw URL">
         <select id="editBanned">
           <option value="false">Aktif</option>
           <option value="true">Banned</option>
@@ -107,8 +107,10 @@
     </div>
   </div>
 
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database.js"></script>
+  <!-- Firebase SDK via CDN -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-database-compat.js"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyBms-rnUosSdpmMKUpaOZ8ML-V0CTv9NOQ",
@@ -143,18 +145,18 @@
 
       if (!uid || !password || !script || !expired) return alert("Isi semua field, nyan~");
 
-      firebase.database().ref("users/" + uid).set({
+      firebase.database().ref('users/' + uid).set({
         password, expired, banned, script_url: script
       }).then(() => {
         alert("✅ UID berhasil disimpan!");
-      }).catch(err => alert("Gagal: " + err));
+      }).catch((err) => alert("Gagal: " + err));
     }
 
     function loadUser() {
       const uid = document.getElementById("editUid").value.trim();
       if (!uid) return alert("Masukkan UID!");
 
-      firebase.database().ref("users/" + uid).once("value").then((snap) => {
+      firebase.database().ref('users/' + uid).get().then((snap) => {
         if (!snap.exists()) return alert("UID tidak ditemukan.");
         const data = snap.val();
         document.getElementById("editForm").style.display = "block";
@@ -174,17 +176,12 @@
 
       if (!uid || !password || !script || !expired) return alert("Semua wajib diisi ya~");
 
-      firebase.database().ref("users/" + uid).set({
+      firebase.database().ref('users/' + uid).set({
         password, expired, banned, script_url: script
       }).then(() => {
         alert("✅ Perubahan disimpan!");
-      }).catch(err => alert("Gagal update: " + err));
+      }).catch((err) => alert("Gagal update: " + err));
     }
-
-    window.checkLogin = checkLogin;
-    window.saveUser = saveUser;
-    window.loadUser = loadUser;
-    window.updateUser = updateUser;
   </script>
 
   <audio id="bgMusic" hidden loop autoplay>
